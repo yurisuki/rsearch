@@ -9,21 +9,40 @@ A Chromium extension for searching your favorite websites together.
 - Drag to reorder engines, or use keyboard-accessible arrow buttons.
 - Capture the current website as an engine and review its search URL.
 - Import and export your engine library as JSON.
-- Open the popup with **Alt+Shift+R**.
+- Assign a keyboard shortcut to open the popup in your browser’s extension shortcut settings.
 
 ## Install
 
-No build step or dependencies are required.
+Download a versioned package from [GitHub Releases](https://github.com/yurisuki/rsearch/releases/latest). Each release includes a ZIP, a signed CRX, and SHA-256 checksums. No build step or dependencies are required.
 
-1. Download the repository ZIP and extract it into a permanent folder, or clone this repository.
+### ZIP installation (Chrome, Brave, and Edge)
+
+1. Download the release ZIP (for example, `rsearch-2.2.0.zip`) and extract it into a permanent folder.
 2. Open `chrome://extensions` (Brave: `brave://extensions`, Edge: `edge://extensions`).
 3. Enable **Developer mode**.
 4. Choose **Load unpacked** and select the folder containing `manifest.json`.
 5. Pin rsearch to your toolbar.
 
-Keep the folder in place while the extension is installed. To update, pull the latest changes (or replace the files), then click **Reload** on the extension card. Export your engines before changing installation location or reinstalling: a different extension identity can have separate storage.
+Keep the folder in place while the extension is installed. To update, download the latest release ZIP, replace the files in the same folder, then click **Reload** on the extension card. Export your engines before changing installation location or reinstalling: a different extension identity can have separate storage.
 
-Chrome Web Store publication would provide one-click installation and automatic updates. This repository is currently installed manually.
+### CRX installation (Brave on Linux)
+
+1. Download the release CRX (for example, `rsearch-2.2.0.crx`).
+2. Open `brave://extensions` and enable **Developer mode**.
+3. Drag the CRX from your file manager onto the extensions page and confirm installation.
+4. Pin rsearch to your toolbar.
+
+CRX installation depends on your browser and its policies. If installation is blocked, use the ZIP instructions above. See [Brave's installation guidance](https://support.brave.com/hc/en-us/articles/360017914832-Why-am-I-seeing-the-message-extensions-disabled-by-Brave).
+
+You can also clone this repository or extract its source ZIP and follow the **Load unpacked** steps above. For a cloned installation, update with `git pull`, then click **Reload**.
+
+GitHub release installations are updated manually. Chrome Web Store publication would provide one-click installation and automatic updates.
+
+## Keyboard shortcut
+
+In Brave, open `brave://extensions/shortcuts`, find **rsearch**, and assign a shortcut to **Activate the extension**. If the suggested **Alt+Shift+R** binding does not work, set your preferred shortcut there.
+
+In Chrome or Edge, use `chrome://extensions/shortcuts` or `edge://extensions/shortcuts`.
 
 ## Use
 
