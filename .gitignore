@@ -1,0 +1,9 @@
+# Local settings, exported libraries, and signing artifacts
+.DS_Store
+Thumbs.db
+*.pem
+*.key
+*.crx
+*.zip
+rsearch-engines-*.json
+node_modules/

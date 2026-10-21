@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔎 rsearch</h1>
+      <button id="settingsBtnHeader" title="Manage engines">⚙️</button>
+    </div>
+
+    <div id="searchView">
+      <input type="text" id="searchInput" placeholder="Enter search query..." autocomplete="off">
+      <button id="addCurrentWebsiteBtn" class="settings-item">＋ Add current website</button>
+      <div id="engineList" class="engine-list"></div>
+      <div id="emptyEngines" class="empty-engines hidden">
+        <h2>No search engines yet</h2>
+        <p>Add your favorite sites or import an engine list to start searching.</p>
+        <button id="getStartedBtn" class="save-btn">Get started</button>
+      </div>
+      <button id="searchSelectedBtn" class="search-all-btn" disabled>Search selected sites</button>
+      <button id="searchAllBtn" class="search-all-btn">Search All Engines</button>
+    </div>
+
+    <div id="settingsView" class="hidden">
+      <div class="manage-header"><button id="backFromSettingsBtn">← Back</button><span>Settings</span></div>
+      <div class="settings-list">
+        <button id="manageEnginesBtn" class="settings-item">🔧 Manage Engines</button>
+        <button id="importBtn" class="settings-item">📥 Import Engines</button>
+        <button id="exportBtn" class="settings-item">📤 Export Engines</button>
+      </div>
+    </div>
+
+    <div id="manageView" class="hidden">
+      <div class="manage-header"><button id="backFromManageBtn">← Back</button><span>Manage Engines</span></div>
+      <div class="manage-actions">
+        <button id="addEngineBtn" class="action-btn">➕ Add</button>
+        <button id="deleteAllEnginesBtn" class="action-btn delete">🗑️ Delete all</button>
+      </div>
+      <div id="engineListManage" class="engine-list-manage"></div>
+    </div>
+
+    <div id="importView" class="hidden">
+      <div class="manage-header"><button id="backFromImportBtn">← Back</button><span>Import Engines</span></div>
+      <p class="import-help">Choose an exported engines JSON file.</p>
+      <input id="importFile" type="file" accept="application/json,.json" class="file-input">
+    </div>
+
+    <div id="addEngineView" class="hidden">
+      <div class="manage-header"><button id="backFromAddBtn">← Back</button><span>Add Engine</span></div>
+      <input type="text" id="engineName" placeholder="Engine name (e.g., 🔍 Google)">
+      <input type="text" id="engineUrl" placeholder="URL with $Q for query (e.g., https://google.com/search?q=$Q)">
+      <button id="saveEngineBtn" class="save-btn">Save Engine</button>
+    </div>
+
+    <div id="editEngineView" class="hidden">
+      <div class="manage-header"><button id="backFromEditBtn">← Back</button><span>Edit Engine</span></div>
+      <input type="text" id="editEngineName" placeholder="Engine name (e.g., 🔍 Google)">
+      <input type="text" id="editEngineUrl" placeholder="URL with $Q for query (e.g., https://google.com/search?q=$Q)">
+      <button id="saveEditedEngineBtn" class="save-btn">Save Changes</button>
+    </div>
+
+    <div id="deleteConfirmDialog" class="dialog-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="deleteConfirmTitle">
+      <div class="dialog">
+        <h2 id="deleteConfirmTitle">Delete all engines?</h2>
+        <p id="deleteConfirmMessage"></p>
+        <div class="dialog-actions">
+          <button id="cancelDeleteBtn" class="action-btn">Cancel</button>
+          <button id="confirmDeleteBtn" class="delete-btn">Delete all</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
