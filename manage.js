@@ -100,6 +100,7 @@ function draftFromWebsite(raw, title) {
   return { name: title || url.hostname, url: url.toString().replace(/%24Q/g, '$Q') };
 }
 async function init() {
+  await initShortcutSettings();
   const saved = await chrome.storage.local.get('engines'); engines = saved.engines || []; render();
   $('filter').addEventListener('input', render);
   $('add').addEventListener('click', () => edit());
@@ -132,3 +133,36 @@ async function init() {
   if (location.hash === '#import') notify('Choose Import JSON to replace your engine library with an exported file.');
 }
 init().catch(e => notify(`Could not load engines: ${e.message}`));
+
+async function initShortcutSettings() {
+  const saved = await chrome.storage.local.get('pageShortcut');
+  let shortcut = saved.pageShortcut === undefined ? RsearchShortcut.defaultValue : saved.pageShortcut;
+  let recording = false;
+  const renderShortcut = () => { $('recordShortcut').textContent = RsearchShortcut.label(shortcut); };
+  async function saveShortcut(next) {
+    recording = false;
+    try {
+      await chrome.storage.local.set({ pageShortcut: next });
+      shortcut = next; renderShortcut();
+      $('shortcutHelp').textContent = 'Saved. Applies to open websites immediately.';
+    } catch (error) { renderShortcut(); notify(`Could not save shortcut: ${error.message}`); }
+  }
+  renderShortcut();
+  $('recordShortcut').addEventListener('click', () => {
+    recording = true; $('recordShortcut').textContent = 'Press a key…';
+    $('shortcutHelp').textContent = 'Press a key or combination. Esc cancels.';
+  });
+  $('recordShortcut').addEventListener('blur', () => { recording = false; renderShortcut(); });
+  $('recordShortcut').addEventListener('keydown', event => {
+    if (!recording || event.repeat || event.isComposing) return;
+    event.preventDefault(); event.stopPropagation();
+    if (event.key === 'Escape') { recording = false; renderShortcut(); return; }
+    if (['Control', 'Alt', 'Shift', 'Meta', 'Dead', 'Unidentified'].includes(event.key)) return;
+    if (event.key === 'Tab' || event.getModifierState('AltGraph')) {
+      $('shortcutHelp').textContent = 'Choose another key; Tab and AltGr are reserved for navigation and typing.'; return;
+    }
+    saveShortcut(RsearchShortcut.fromEvent(event));
+  });
+  $('resetShortcut').addEventListener('click', () => saveShortcut(RsearchShortcut.defaultValue));
+  $('disableShortcut').addEventListener('click', () => saveShortcut(null));
+}

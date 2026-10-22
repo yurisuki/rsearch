@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "rsearch",
-  "version": "2.2.0",
+  "version": "2.4.0",
   "description": "Professional multi-engine search tool",
   "permissions": [
     "storage",
@@ -14,18 +14,18 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
-    }
+    },
+    "default_title": "rsearch \u2014 open search panel"
   },
   "commands": {
     "_execute_action": {
       "suggested_key": {
-        "default": "Alt+Shift+R"
+        "default": "Ctrl+Period"
       }
     }
   },
@@ -34,5 +34,32 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "popup.html"
+      ],
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": [
+        "shortcut-config.js",
+        "panel.js",
+        "shortcut.js"
+      ],
+      "all_frames": true,
+      "match_about_blank": true,
+      "run_at": "document_idle"
+    }
+  ]
 }

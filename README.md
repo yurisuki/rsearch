@@ -9,7 +9,7 @@ A Chromium extension for searching your favorite websites together.
 - Drag to reorder engines, or use keyboard-accessible arrow buttons.
 - Capture the current website as an engine and review its search URL.
 - Import and export your engine library as JSON.
-- Assign a keyboard shortcut to open the popup in your browser’s extension shortcut settings.
+- Assign a keyboard shortcut to toggle the in-page panel in your browser’s extension shortcut settings.
 
 ## Install
 
@@ -17,7 +17,7 @@ Download a versioned package from [GitHub Releases](https://github.com/yurisuki/
 
 ### ZIP installation (Chrome, Brave, and Edge)
 
-1. Download the release ZIP (for example, `rsearch-2.2.0.zip`) and extract it into a permanent folder.
+1. Download the release ZIP (for example, `rsearch-2.4.0.zip`) and extract it into a permanent folder.
 2. Open `chrome://extensions` (Brave: `brave://extensions`, Edge: `edge://extensions`).
 3. Enable **Developer mode**.
 4. Choose **Load unpacked** and select the folder containing `manifest.json`.
@@ -27,7 +27,7 @@ Keep the folder in place while the extension is installed. To update, download t
 
 ### CRX installation (Brave on Linux)
 
-1. Download the release CRX (for example, `rsearch-2.2.0.crx`).
+1. Download the release CRX (for example, `rsearch-2.4.0.crx`).
 2. Open `brave://extensions` and enable **Developer mode**.
 3. Drag the CRX from your file manager onto the extensions page and confirm installation.
 4. Pin rsearch to your toolbar.
@@ -40,13 +40,17 @@ GitHub release installations are updated manually. Chrome Web Store publication 
 
 ## Keyboard shortcut
 
-In Brave, open `brave://extensions/shortcuts`, find **rsearch**, and assign a shortcut to **Activate the extension**. If the suggested **Alt+Shift+R** binding does not work, set your preferred shortcut there.
+Press **.** on a website to toggle the panel. This shortcut is ignored in inputs, text areas, and editable content. Open the gear → **Page shortcut** to record another key or combination, restore `.`, or disable it. Changes apply to loaded pages immediately. After installing or reloading the extension, refresh existing tabs once. Internal browser pages do not support page shortcuts; use the toolbar icon there.
+
+The browser shortcut is an optional fallback:
+
+In Brave, open `brave://extensions/shortcuts`, find **rsearch**, and assign a shortcut to **Activate the extension**. If the suggested **Ctrl+.** binding does not work, set your preferred shortcut there.
 
 In Chrome or Edge, use `chrome://extensions/shortcuts` or `edge://extensions/shortcuts`.
 
 ## Use
 
-Enter a query, check sites, and choose **Search selected**. **Search All Engines** always searches the whole library. Enter searches the checked sites when any are checked, otherwise all engines. Selection lasts while the popup is open. One result opens in the current tab; multiple results open in a new window.
+Enter a query, check sites, and choose **Search selected**. **Search All Engines** always searches the whole library. Enter searches the checked sites when any are checked, otherwise all engines. One result opens in a new tab; multiple results open in a new window. The wide, centered panel lists sites in compact rows with their URLs. Use Up/Down to navigate and Space to select. The panel stays open when you click into the page, copy text, or switch tabs, and closes automatically after a successful search. Failed searches keep it open so you can retry. Close it with Esc, the × button, or the extension shortcut. Your query and selection survive toggling the panel until the source page reloads or navigates. On internal browser pages, rsearch opens a separate persistent window instead.
 
 Click the gear to open the engine library. Drag the ⠿ handle above or below another site to reorder; the insertion line previews the new position. Changes save automatically.
 
@@ -75,6 +79,8 @@ Edit the HTML, CSS, and JavaScript directly, then reload the unpacked extension.
 node --check popup.js
 node --check manage.js
 node --check background.js
+node --check panel.js
+node --test tests/*.test.cjs
 ```
 
 Installation reference: https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked

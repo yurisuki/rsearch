@@ -3,10 +3,15 @@
 <body><main>
 <header><a class="brand" href="manage.html">🔎 rsearch</a><span class="badge">YOUR SEARCH WORKSPACE</span></header>
 <section class="intro"><div><p class="eyebrow">ENGINE LIBRARY</p><h1>Your sites. Your order.</h1><p>Keep your favorite searches together. Changes save automatically.</p></div><button id="add" class="primary">＋ Add engine</button></section>
+<section class="shortcut-settings" aria-labelledby="shortcutTitle">
+<div><h2 id="shortcutTitle">Page shortcut</h2><p>Open rsearch on websites without a browser shortcut. Ignored while typing in fields and editors.</p></div>
+<div class="shortcut-controls"><button id="recordShortcut" title="Click, then press your preferred key combination">.</button><button id="resetShortcut">Reset to .</button><button id="disableShortcut">Disable</button></div>
+<p id="shortcutHelp" role="status">Click the shortcut to change it. Esc cancels recording.</p>
+</section>
 <div class="toolbar"><label class="filter">⌕ <input id="filter" type="search" placeholder="Find an engine…" aria-label="Find an engine"></label><span id="count"></span><button id="import">Import JSON</button><button id="export">Export JSON</button><input id="file" type="file" accept=".json,application/json" hidden></div>
 <section class="library"><div class="list-heading"><span>SEARCH ENGINE</span><span>ORDER & ACTIONS</span></div><div id="list"></div><p id="empty" hidden>No engines here yet. Add a site or import your library.</p></section>
 <footer><p>Drag the ⠿ handle to reorder, or use ↑ and ↓.</p><button id="deleteAll" class="danger subtle">Delete all engines</button></footer>
 <p id="status" role="status" aria-live="polite"></p>
 <dialog id="editor"><form id="form"><div class="dialog-heading"><h2 id="editorTitle">Add engine</h2><button type="button" id="close" aria-label="Close">✕</button></div><label>Engine name<input id="name" required placeholder="e.g. Wikipedia"></label><label>Search URL<input id="url" required placeholder="https://example.com/search?q=$Q"></label><p class="help">Replace the search words in the URL with <code>$Q</code>. To capture a site, run a search there, then choose “Add current website” in rsearch.</p><p id="editorError" role="alert"></p><div class="dialog-actions"><button type="button" id="cancel">Cancel</button><button type="submit" class="primary">Save engine</button></div></form></dialog>
 <dialog id="confirm"><h2>Delete all engines?</h2><p>This removes your entire library. Export a copy first if you want a backup.</p><div class="dialog-actions"><button id="cancelDelete">Cancel</button><button id="confirmDelete" class="danger">Delete all</button></div></dialog>
-</main><script src="manage.js"></script></body></html>
+</main><script src="shortcut-config.js"></script><script src="manage.js"></script></body></html>
