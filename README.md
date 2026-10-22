@@ -17,7 +17,7 @@ Download a versioned package from [GitHub Releases](https://github.com/yurisuki/
 
 ### ZIP installation (Chrome, Brave, and Edge)
 
-1. Download the release ZIP (for example, `rsearch-2.4.0.zip`) and extract it into a permanent folder.
+1. Download the release ZIP (for example, `rsearch-2.5.0.zip`) and extract it into a permanent folder.
 2. Open `chrome://extensions` (Brave: `brave://extensions`, Edge: `edge://extensions`).
 3. Enable **Developer mode**.
 4. Choose **Load unpacked** and select the folder containing `manifest.json`.
@@ -27,7 +27,7 @@ Keep the folder in place while the extension is installed. To update, download t
 
 ### CRX installation (Brave on Linux)
 
-1. Download the release CRX (for example, `rsearch-2.4.0.crx`).
+1. Download the release CRX (for example, `rsearch-2.5.0.crx`).
 2. Open `brave://extensions` and enable **Developer mode**.
 3. Drag the CRX from your file manager onto the extensions page and confirm installation.
 4. Pin rsearch to your toolbar.
@@ -50,15 +50,19 @@ In Chrome or Edge, use `chrome://extensions/shortcuts` or `edge://extensions/sho
 
 ## Use
 
-Enter a query, check sites, and choose **Search selected**. **Search All Engines** always searches the whole library. Enter searches the checked sites when any are checked, otherwise all engines. One result opens in a new tab; multiple results open in a new window. The wide, centered panel lists sites in compact rows with their URLs. Use Up/Down to navigate and Space to select. The panel stays open when you click into the page, copy text, or switch tabs, and closes automatically after a successful search. Failed searches keep it open so you can retry. Close it with Esc, the × button, or the extension shortcut. Your query and selection survive toggling the panel until the source page reloads or navigates. On internal browser pages, rsearch opens a separate persistent window instead.
+Enter a query, check sites, and choose **Search selected**. **Search All Engines** always searches the whole library. Enter searches the checked sites when any are checked, otherwise all engines. One result opens in a new tab; multiple results open in a new window. The wide, centered panel lists sites in compact rows with their URLs. Use Up/Down to navigate and Space to select. The panel stays open when you click into the page, copy text, or switch tabs, and closes automatically after a successful search. Failed searches keep it open so you can retry. Close it with Esc, the × button, or the extension shortcut. Your query survives toggling the panel until the source page reloads or navigates. Selected sites are cleared whenever the panel closes, including after a successful search. On internal browser pages, rsearch opens a separate persistent window instead.
 
-Click the gear to open the engine library. Drag the ⠿ handle above or below another site to reorder; the insertion line previews the new position. Changes save automatically.
+Double-click a site row to search just that site, regardless of other checked sites.
+
+Click the gear to open the engine library. Under **Search behavior**, disable **Keep the last search query** to clear the text after successful searches. Drag the ⠿ handle above or below another site to reorder; the insertion line previews the new position. Changes save automatically.
 
 To add a website, first run a search on that site, then choose **Add current website** in rsearch. Common search parameters are replaced with `$Q`. Review the draft before saving. For other search URLs, manually replace the search words with `$Q`.
 
 ## Engine format
 
-Import a JSON array of objects with `name` and HTTP/HTTPS `url` fields. Each search URL must contain `$Q`. Import replaces the current library; export a backup first.
+Use **Export backup** to save sites, the page shortcut, and the search preference together. Importing a full backup restores all three. **Export sites only** keeps the legacy format; importing it leaves current settings unchanged. Search queries are never included in backups.
+
+The legacy format is a JSON array of objects with `name` and HTTP/HTTPS `url` fields. Each search URL must contain `$Q`. Import replaces the current library; export a backup first.
 
 ```json
 [

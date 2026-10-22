@@ -101,6 +101,15 @@ function draftFromWebsite(raw, title) {
 }
 async function init() {
   await initShortcutSettings();
+  const preferences = await chrome.storage.local.get('rememberQuery');
+  $('rememberQuery').checked = preferences.rememberQuery !== false;
+  $('rememberQuery').addEventListener('change', async () => {
+    try { await chrome.storage.local.set({ rememberQuery: $('rememberQuery').checked }); notify('Search preference saved'); }
+    catch (error) { $('rememberQuery').checked = !$('rememberQuery').checked; notify(`Could not save: ${error.message}`); }
+  });
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === 'local' && changes.rememberQuery) $('rememberQuery').checked = changes.rememberQuery.newValue !== false;
+  });
   const saved = await chrome.storage.local.get('engines'); engines = saved.engines || []; render();
   $('filter').addEventListener('input', render);
   $('add').addEventListener('click', () => edit());
@@ -114,14 +123,29 @@ async function init() {
   $('import').addEventListener('click', () => $('file').click());
   $('file').addEventListener('change', async event => {
     const file = event.target.files[0]; if (!file) return;
-    try { const items = JSON.parse((await file.text()).replace(/^\uFEFF/, '')); validate(items); await commit(items, `Imported ${items.length} engines`); }
+    if (busy) return;
+    busy = true;
+    try {
+      const data = RsearchBackup.parse(JSON.parse((await file.text()).replace(/^\uFEFF/, '')));
+      validate(data.engines);
+      await chrome.storage.local.set(data);
+      engines = data.engines; render();
+      notify(`Imported ${engines.length} engines${'pageShortcut' in data ? ' and settings' : ''}`);
+    }
     catch (e) { notify(`Import failed: ${e.message}`); }
-    finally { event.target.value = ''; }
+    finally { busy = false; event.target.value = ''; }
   });
-  $('export').addEventListener('click', () => {
-    const url = URL.createObjectURL(new Blob([JSON.stringify(engines, null, 2)], { type: 'application/json' }));
-    const a = document.createElement('a'); a.href = url; a.download = `rsearch-engines-${new Date().toISOString().slice(0, 10)}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  function downloadJSON(value, prefix) {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' }));
+    const a = document.createElement('a'); a.href = url; a.download = `${prefix}-${new Date().toISOString().slice(0, 10)}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  $('export').addEventListener('click', async () => {
+    try {
+      const saved = await chrome.storage.local.get(['engines', 'pageShortcut', 'rememberQuery']);
+      downloadJSON(RsearchBackup.create(saved.engines || [], saved), 'rsearch-backup');
+    } catch (error) { notify(`Export failed: ${error.message}`); }
   });
+  $('exportEngines').addEventListener('click', () => downloadJSON(engines, 'rsearch-engines'));
   $('deleteAll').addEventListener('click', () => $('confirm').showModal());
   $('cancelDelete').addEventListener('click', () => $('confirm').close());
   $('confirmDelete').addEventListener('click', async () => { if (await commit([], 'Library cleared')) $('confirm').close(); });
@@ -147,6 +171,11 @@ async function initShortcutSettings() {
       $('shortcutHelp').textContent = 'Saved. Applies to open websites immediately.';
     } catch (error) { renderShortcut(); notify(`Could not save shortcut: ${error.message}`); }
   }
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local' || !changes.pageShortcut) return;
+    shortcut = changes.pageShortcut.newValue === undefined ? RsearchShortcut.defaultValue : changes.pageShortcut.newValue;
+    recording = false; renderShortcut();
+  });
   renderShortcut();
   $('recordShortcut').addEventListener('click', () => {
     recording = true; $('recordShortcut').textContent = 'Press a key…';

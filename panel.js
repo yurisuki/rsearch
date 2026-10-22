@@ -24,6 +24,7 @@ globalThis.rsearchTogglePanel = () => {
   let visible = true;
   function hide() {
     visible = false;
+    frame.contentWindow.postMessage({ action: 'rsearch:resetSelection' }, new URL(frame.src).origin);
     host.style.setProperty('display', 'none', 'important');
     window.focus();
     if (returnFocus?.isConnected) {

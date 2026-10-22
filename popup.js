@@ -3,6 +3,8 @@ const DEFAULT_ENGINES = [
   { name: '🦆 DuckDuckGo', url: 'https://duckduckgo.com/?q=$Q' }
 ];
 let engines = [];
+let rememberQuery = true;
+let searching = false;
 let selected = new Set();
 const engineKey = engine => JSON.stringify([engine.name, engine.url]);
 const $ = id => document.getElementById(id);
@@ -13,9 +15,20 @@ function focusSearch() {
   input.select();
 }
 window.addEventListener('message', event => {
-  if (window.parent !== window && event.source === window.parent && event.data?.action === 'rsearch:focusSearch') focusSearch();
+  if (window.parent === window || event.source !== window.parent) return;
+  if (event.data?.action === 'rsearch:focusSearch') focusSearch();
+  if (event.data?.action === 'rsearch:resetSelection') resetSelection();
 });
+function resetSelection() {
+  selected.clear();
+  document.querySelectorAll('.engine-item input').forEach(check => {
+    check.checked = false;
+    check.closest('.engine-item').classList.remove('selected');
+  });
+  updateSelectionButton();
+}
 function closePanel() {
+  resetSelection();
   if (window.parent !== window) chrome.runtime.sendMessage({ action: 'closePanel' });
   else window.close();
 }
@@ -37,6 +50,8 @@ function renderEngines() {
   $('engineList').replaceChildren();
   engines.forEach(engine => {
     const label = document.createElement('label'); label.className = 'engine-item';
+    label.title = 'Double-click to search only this site';
+    label.addEventListener('dblclick', event => { event.preventDefault(); searchEngines(false, engine); });
     const check = document.createElement('input'); check.type = 'checkbox'; check.checked = selected.has(engineKey(engine));
     check.addEventListener('change', () => {
       if (check.checked) selected.add(engineKey(engine)); else selected.delete(engineKey(engine));
@@ -56,17 +71,21 @@ function updateSelectionButton() {
   $('searchSelectedBtn').disabled = count === 0;
   $('searchSelectedBtn').textContent = count ? `Search selected (${count})` : 'Search selected';
 }
-async function searchEngines(onlySelected) {
+async function searchEngines(onlySelected, singleEngine = null) {
+  if (searching) return;
   const query = $('searchInput').value.trim();
   if (!query) return showNotification('Please enter a search query');
-  const targets = onlySelected ? engines.filter(engine => selected.has(engineKey(engine))) : engines;
+  const targets = singleEngine ? [singleEngine] : onlySelected ? engines.filter(engine => selected.has(engineKey(engine))) : engines;
   if (!targets.length) return showNotification('Select at least one site');
   const urls = targets.map(engine => engine.url.replaceAll('$Q', encodeURIComponent(query)));
+  searching = true;
   try {
     const result = await chrome.runtime.sendMessage(urls.length === 1 ? { action: 'searchSingle', url: urls[0] } : { action: 'searchAll', urls });
     if (!result?.success) throw Error(result?.error || 'No response from the extension');
+    if (!rememberQuery) $('searchInput').value = '';
     closePanel();
   } catch (error) { showNotification(`Search failed: ${error.message}`); }
+  finally { searching = false; }
 }
 let notificationTimer;
 function showNotification(message) {
@@ -76,7 +95,7 @@ function showNotification(message) {
 }
 document.addEventListener('DOMContentLoaded', async () => {
   try {
-    const saved = await chrome.storage.local.get('engines'); engines = saved.engines || DEFAULT_ENGINES;
+    const saved = await chrome.storage.local.get(['engines', 'rememberQuery']); rememberQuery = saved.rememberQuery !== false; engines = saved.engines || DEFAULT_ENGINES;
     if (!saved.engines) await chrome.storage.local.set({ engines });
     $('closePanelBtn').addEventListener('click', closePanel);
     document.addEventListener('keydown', event => {
@@ -104,7 +123,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (event.key === 'Enter') searchEngines(selected.size > 0);
     });
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area !== 'local' || !changes.engines) return;
+      if (area !== 'local') return;
+      if (changes.rememberQuery) rememberQuery = changes.rememberQuery.newValue !== false;
+      if (!changes.engines) return;
       engines = changes.engines.newValue || [];
       selected = new Set([...selected].filter(key => engines.some(engine => engineKey(engine) === key)));
       renderEngines();
