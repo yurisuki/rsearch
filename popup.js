@@ -71,13 +71,20 @@ function updateSelectionButton() {
   $('searchSelectedBtn').disabled = count === 0;
   $('searchSelectedBtn').textContent = count ? `Search selected (${count})` : 'Search selected';
 }
+function buildSearchUrl(template, query) {
+  const url = new URL(template);
+  // Geo-Ship embeds the query inside a JSON string in its hash route.
+  const jsonQuery = /(^|\.)geo-ship\.com$/.test(url.hostname) && url.hash.includes('searchParams=');
+  const value = jsonQuery ? JSON.stringify(query).slice(1, -1) : query;
+  return template.replaceAll('$Q', encodeURIComponent(value));
+}
 async function searchEngines(onlySelected, singleEngine = null) {
   if (searching) return;
   const query = $('searchInput').value.trim();
   if (!query) return showNotification('Please enter a search query');
   const targets = singleEngine ? [singleEngine] : onlySelected ? engines.filter(engine => selected.has(engineKey(engine))) : engines;
   if (!targets.length) return showNotification('Select at least one site');
-  const urls = targets.map(engine => engine.url.replaceAll('$Q', encodeURIComponent(query)));
+  const urls = targets.map(engine => buildSearchUrl(engine.url, query));
   searching = true;
   try {
     const result = await chrome.runtime.sendMessage(urls.length === 1 ? { action: 'searchSingle', url: urls[0] } : { action: 'searchAll', urls });

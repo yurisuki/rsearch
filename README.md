@@ -17,7 +17,7 @@ Download a versioned package from [GitHub Releases](https://github.com/yurisuki/
 
 ### ZIP installation (Chrome, Brave, and Edge)
 
-1. Download the release ZIP (for example, `rsearch-2.5.0.zip`) and extract it into a permanent folder.
+1. Download the release ZIP (for example, `rsearch-2.5.1.zip`) and extract it into a permanent folder.
 2. Open `chrome://extensions` (Brave: `brave://extensions`, Edge: `edge://extensions`).
 3. Enable **Developer mode**.
 4. Choose **Load unpacked** and select the folder containing `manifest.json`.
@@ -56,7 +56,7 @@ Double-click a site row to search just that site, regardless of other checked si
 
 Click the gear to open the engine library. Under **Search behavior**, disable **Keep the last search query** to clear the text after successful searches. Drag the ⠿ handle above or below another site to reorder; the insertion line previews the new position. Changes save automatically.
 
-To add a website, first run a search on that site, then choose **Add current website** in rsearch. Common search parameters are replaced with `$Q`. Review the draft before saving. For other search URLs, manually replace the search words with `$Q`.
+To add a website, first run a search on that site, then choose **Add current website** in rsearch. Common search parameters and Geo-Ship’s embedded search keywords are replaced with `$Q`. Geo-Ship queries support quotation marks and backslashes while preserving the saved filters. Review the draft before saving. For other search URLs, manually replace the search words with `$Q`.
 
 ## Engine format
 

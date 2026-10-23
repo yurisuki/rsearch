@@ -94,6 +94,18 @@ function edit(index = -1, draft = {}) {
 function draftFromWebsite(raw, title) {
   const url = new URL(raw);
   if (!['http:', 'https:'].includes(url.protocol)) throw Error('Open an HTTP or HTTPS website first.');
+  if (/(^|\.)geo-ship\.com$/.test(url.hostname) && url.hash.includes('?')) {
+    const split = url.hash.indexOf('?');
+    const params = new URLSearchParams(url.hash.slice(split + 1));
+    if (params.has('searchParams')) {
+      const search = JSON.parse(params.get('searchParams'));
+      if (search.commonOptions && typeof search.commonOptions.keywords === 'string') {
+        search.commonOptions.keywords = '$Q';
+        params.set('searchParams', JSON.stringify(search));
+        url.hash = url.hash.slice(0, split + 1) + params.toString();
+      }
+    }
+  }
   const keys = ['q', 'query', 'search', 's', 'search_query', 'searchTerm', 'keyword', 'keywords', '_nkw', 'phrase', 'string'];
   const key = keys.find(key => url.searchParams.has(key));
   if (key) url.searchParams.set(key, '$Q');
